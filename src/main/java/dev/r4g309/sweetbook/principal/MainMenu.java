@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class MainMenu {
     private static final Scanner keyboard = new Scanner(System.in);
@@ -78,13 +79,16 @@ public class MainMenu {
 
     }
 
+
     private List<Languages> insertLanguages(@NotNull List<String> languages) {
-        return languages.stream()
+        List<Languages> languageObjects = languages.stream()
                 .map(language -> {
                     Optional<Languages> l = languagesRepository.findByLanguage(language);
-                    return l.orElseGet(() -> languagesRepository.save(new Languages(language)));
+                    return l.orElseGet(() -> new Languages(language));
                 })
-                .toList();
+                .collect(Collectors.toList());
+
+        return languagesRepository.saveAll(languageObjects);
     }
 
     private void showRegisteredBooks() {
